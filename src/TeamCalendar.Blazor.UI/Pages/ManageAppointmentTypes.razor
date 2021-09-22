@@ -1,0 +1,49 @@
+﻿@page "/manageappointmenttypes"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authStateProvider
+@inject IEmployeeRepository empRepo
+@inject IAppointmentTypeRepository appointmentTypeRepo
+
+<h1>Manage Appointment Types</h1>
+<br />
+<RadzenButton Icon="add_circle_outline" Style="margin-bottom: 10px" Text="Add Appointment Type" />
+<hr />
+
+<RadzenDataGrid @ref="appointmentTypesGrid"
+                AllowFiltering="true"
+                AllowColumnResize="true"
+                PageSize="10"
+                AllowPaging="true"
+                AllowSorting="true"
+                FilterMode="FilterMode.Advanced"
+                Data="@appointmentTypes"
+                TItem="AppointmentTypeViewModel"
+                LogicalFilterOperator="Radzen.LogicalFilterOperator.Or"
+                EditMode="DataGridEditMode.Single">
+    <Columns>
+        <RadzenDataGridColumn TItem="AppointmentTypeViewModel" Property="Id" Title="ID" />
+        <RadzenDataGridColumn TItem="AppointmentTypeViewModel" Property="Name" Title="Name" />
+        <RadzenDataGridColumn TItem="AppointmentTypeViewModel" Property="Description" Title="Description" />
+        <RadzenDataGridColumn TItem="AppointmentTypeViewModel" Property="Prefix" Title="Prefix" />
+        <RadzenDataGridColumn TItem="AppointmentTypeViewModel" Property="BackgroundColor" Title="BackgroundColor" />
+        <RadzenDataGridColumn TItem="AppointmentTypeViewModel" Property="ForegroundColor" Title="ForegroundColor" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    RadzenDataGrid<AppointmentTypeViewModel> appointmentTypesGrid;
+    IEnumerable<AppointmentTypeViewModel> appointmentTypes = new List<AppointmentTypeViewModel>();
+    int userId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUser = await empRepo.GetByUsername(user.Identity.Name.Split("\\")[1]);
+
+        userId = currentUser.Id;
+        appointmentTypes = await appointmentTypeRepo.GetAll();
+    }
+}

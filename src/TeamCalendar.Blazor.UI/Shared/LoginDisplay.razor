@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authStateProvider
+@inject TeamCalendar.DataAccessLibrary.Interfaces.IEmployeeRepository empRepo
+<AuthorizeView>
+    Hello, @username!
+</AuthorizeView>
+
+@code {
+    private string username;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var employee = await empRepo.GetByUsername(user.Identity.Name.Split("\\")[1]);
+
+
+        username = $"{employee.FirstName} {employee.LastName}";
+    }
+}

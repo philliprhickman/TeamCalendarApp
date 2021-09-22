@@ -1,0 +1,86 @@
+﻿@inject DialogService dialogService
+@inject IAppointmentTypeRepository appointmentTypesRepo
+
+<RadzenTemplateForm TItem="AppointmentViewModel" Data="@appointment" Submit="@OnSubmit">
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-5">
+            <RadzenLabel Text="Description" />
+        </div>
+        <div class="col">
+            <RadzenTextBox @bind-Value="@appointment.Description" Name="Description" Style="width: 300px" />
+            <RadzenRequiredValidator Text="Description is required" Component="Description" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-5">
+            <RadzenLabel Text="Appointment Type" />
+        </div>
+        <div class="col">
+            <RadzenDropDown AllowClear="true" TValue="int" AllowFiltering="true" Style="width: 300px"
+                            Data="@appointmentTypes" TextProperty="Name" ValueProperty="Id"
+                            @bind-Value="@appointment.AppointmentTypeId"
+                            Name="AppointmentType" />
+            <RadzenRequiredValidator Text="Description is required" Component="AppointmentType" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-5">
+            <RadzenLabel Text="Starts At" />
+        </div>
+        <div class="col">
+            <RadzenDatePicker @bind-Value="@appointment.StartsAt" Name="StartsAt" ShowTime="true" Style="width: 300px" />
+            <RadzenRequiredValidator Text="Starts At is required" Component="StartsAt" />
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-5">
+            <RadzenLabel Text="Ends At" />
+        </div>
+        <div class="col">
+            <RadzenDatePicker @bind-Value="@appointment.EndsAt" Name="EndsAt" ShowTime="true" Style="width: 300px" />
+            <RadzenRequiredValidator Text="Ends At is required" Component="EndsAt" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5"></div>
+        <div class="col">
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Save" />
+        </div>
+    </div>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public DateTime StartsAt { get; set; }
+    [Parameter] public DateTime EndsAt { get; set; }
+    AppointmentViewModel appointment = new AppointmentViewModel();
+    IEnumerable<AppointmentTypeViewModel> appointmentTypes = new List<AppointmentTypeViewModel>();
+    EmployeeViewModel currentUser = new EmployeeViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Load the appointment types.
+        appointmentTypes = await appointmentTypesRepo.GetAll();
+    }
+
+    protected override void OnParametersSet()
+    {
+        appointment.StartsAt = StartsAt;
+        appointment.EndsAt = EndsAt;
+    }
+
+    void OnSubmit(AppointmentViewModel appointment)
+    {
+        dialogService.Close(appointment);
+    }
+}
+
+<!--
+
+NOTES:
+    If the user is a manager, display a list of users they can see (that report to them) along
+    with themselves. If the user is a site admin, show a list of all users, including
+    themselves. Otherwise, don't display a user drop-down at all.
+
+-->

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>TeamCalendar</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{b4cd2d82-2e98-40d4-886a-ce7ce913cc92}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>TeamCalendar</RootNamespace>
+    <AssemblyName>TeamCalendar</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo" />
+    <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\StoredProcedures" />
+    <Folder Include="dbo\StoredProcedures\Appointments" />
+    <Folder Include="dbo\StoredProcedures\AppointmentTypes" />
+    <Folder Include="dbo\StoredProcedures\Departments" />
+    <Folder Include="dbo\StoredProcedures\Employees" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Appointments.sql" />
+    <Build Include="dbo\Tables\AppointmentTypes.sql" />
+    <Build Include="dbo\Tables\Departments.sql" />
+    <Build Include="dbo\Tables\Employees.sql" />
+    <Build Include="dbo\StoredProcedures\Appointments\tmclndr_Appointments_Delete.sql" />
+    <Build Include="dbo\StoredProcedures\Appointments\tmclndr_Appointments_GetAll.sql" />
+    <Build Include="dbo\StoredProcedures\Appointments\tmclndr_Appointments_GetByMonthAndYear.sql" />
+    <Build Include="dbo\StoredProcedures\Appointments\tmclndr_Appointments_GetById.sql" />
+    <Build Include="dbo\StoredProcedures\Appointments\tmclndr_Appointments_Insert.sql" />
+    <Build Include="dbo\StoredProcedures\Appointments\tmclndr_Appointments_Update.sql" />
+    <Build Include="dbo\StoredProcedures\AppointmentTypes\tmclndr_AppointmentTypes_Delete.sql" />
+    <Build Include="dbo\StoredProcedures\AppointmentTypes\tmclndr_AppointmentTypes_GetAll.sql" />
+    <Build Include="dbo\StoredProcedures\AppointmentTypes\tmclndr_AppointmentTypes_GetById.sql" />
+    <Build Include="dbo\StoredProcedures\AppointmentTypes\tmclndr_AppointmentTypes_Insert.sql" />
+    <Build Include="dbo\StoredProcedures\AppointmentTypes\tmclndr_AppointmentTypes_Update.sql" />
+    <Build Include="dbo\StoredProcedures\Departments\tmclndr_Departments_Delete.sql" />
+    <Build Include="dbo\StoredProcedures\Departments\tmclndr_Departments_GetAll.sql" />
+    <Build Include="dbo\StoredProcedures\Departments\tmclndr_Departments_GetById.sql" />
+    <Build Include="dbo\StoredProcedures\Departments\tmclndr_Departments_Insert.sql" />
+    <Build Include="dbo\StoredProcedures\Departments\tmclndr_Departments_Update.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_Delete.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_GetAll.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_GetByDepartmentId.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_GetById.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_GetByManagerId.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_GetByUsername.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_Insert.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_Update.sql" />
+    <Build Include="dbo\StoredProcedures\Employees\tmclndr_Employees_GetViewModels.sql" />
+  </ItemGroup>
+</Project>

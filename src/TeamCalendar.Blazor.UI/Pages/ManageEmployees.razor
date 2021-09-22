@@ -1,0 +1,47 @@
+﻿@page "/manageemployees"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authStateProvider
+@inject IEmployeeRepository empRepo
+
+<h1>Manage Employees</h1>
+<br />
+<RadzenButton Icon="add_circle_outline" Style="margin-bottom: 10px" Text="Add Employee" />
+<hr />
+
+<RadzenDataGrid @ref="employeesGrid"
+                AllowFiltering="true"
+                AllowColumnResize="true"
+                PageSize="10"
+                AllowPaging="true"
+                AllowSorting="true"
+                FilterMode="FilterMode.Advanced"
+                Data="@employees"
+                TItem="EmployeeDisplayViewModel"
+                LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="EmployeeDisplayViewModel" Property="Id" Title="ID" />
+        <RadzenDataGridColumn TItem="EmployeeDisplayViewModel" Property="FullName" Title="Full Name" />
+        <RadzenDataGridColumn TItem="EmployeeDisplayViewModel" Property="ManagerName" Title="Manager Name" />
+        <RadzenDataGridColumn TItem="EmployeeDisplayViewModel" Property="DepartmentName" Title="Department" />
+        <RadzenDataGridColumn TItem="EmployeeDisplayViewModel" Property="Username" Title="Username" />
+        <RadzenDataGridColumn TItem="EmployeeDisplayViewModel" Property="EmailAddress" Title="Email Address" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    RadzenDataGrid<EmployeeDisplayViewModel> employeesGrid;
+    int userId = 0;
+    IEnumerable<EmployeeDisplayViewModel> employees = new List<EmployeeDisplayViewModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var currentUser = await empRepo.GetByUsername(user.Identity.Name.Split("\\")[1]);
+
+        userId = currentUser.Id;
+        employees = await empRepo.GetEmployeeDisplayViewModels();
+    }
+}

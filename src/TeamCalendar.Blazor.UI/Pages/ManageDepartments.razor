@@ -1,0 +1,121 @@
+﻿@page "/managedepartments"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider authStateProvider
+@inject TeamCalendar.DataAccessLibrary.Interfaces.IEmployeeRepository empRepo
+@inject IDepartmentRepository departmentRepo
+
+<h1>Manage Departments</h1>
+<br />
+<RadzenButton Icon="add_circle_outline" Style="margin-bottom: 10px" Text="Add Department" Click="@InsertRow" />
+<hr />
+
+<RadzenDataGrid @ref="departmentsGrid"
+                AllowFiltering="true"
+                AllowColumnResize="true"
+                PageSize="10"
+                AllowPaging="true"
+                AllowSorting="true"
+                FilterMode="FilterMode.Advanced"
+                Data="@departments"
+                TItem="DepartmentViewModel"
+                ColumnWidth="300px"
+                LogicalFilterOperator="Radzen.LogicalFilterOperator.Or"
+                EditMode="DataGridEditMode.Single"
+                RowUpdate="@OnUpdateRow"
+                RowCreate="@OnCreateRow">
+    <Columns>
+        <RadzenDataGridColumn TItem="DepartmentViewModel" Property="Id" Title="ID" />
+        <RadzenDataGridColumn TItem="DepartmentViewModel" Property="Name" Title="Name">
+            <EditTemplate Context="department">
+                <RadzenTextBox @bind-Value="department.Name" Style="width: 100%; display: block" Name="Name" />
+                <RadzenRequiredValidator Text="Name is required!" Component="Name" Popup="true" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="DepartmentViewModel" Property="Description" Title="Description">
+            <EditTemplate Context="department">
+                <RadzenTextBox @bind-Value="department.Description" Style="width: 100%; display: block" Name="Description" />
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="DepartmentViewModel" Context="sampleBlazorModelsSampleOrder" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="100px">
+            <Template Context="department">
+                <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(department))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="department">
+                <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(department))">
+                </RadzenButton>
+                <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(department))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="DepartmentViewModel" Context="department" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
+            <Template Context="department">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(department))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+            <EditTemplate Context="department">
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(department))">
+                </RadzenButton>
+            </EditTemplate>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    RadzenDataGrid<DepartmentViewModel> departmentsGrid;
+    private IEnumerable<DepartmentViewModel> departments = new List<DepartmentViewModel>();
+    int userId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var employee = await empRepo.GetByUsername(user.Identity.Name.Split("\\")[1]);
+
+        userId = employee.Id;
+        departments = await departmentRepo.GetAll();
+    }
+
+    void EditRow(DepartmentViewModel department)
+    {
+        departmentsGrid.EditRow(department);
+    }
+
+    async Task OnUpdateRow(DepartmentViewModel department)
+    {
+        await departmentRepo.Update(department, userId);
+    }
+
+    void SaveRow(DepartmentViewModel department)
+    {
+        departmentsGrid.UpdateRow(department);
+    }
+
+    void CancelEdit(DepartmentViewModel department)
+    {
+        departmentsGrid.CancelEditRow(department);
+    }
+
+    async Task DeleteRow(DepartmentViewModel department)
+    {
+        if (departments.Contains(department))
+        {
+            await departmentRepo.Delete(department.Id, userId);
+        }
+        else
+        {
+            departmentsGrid.CancelEditRow(department);
+        }
+    }
+
+    void InsertRow()
+    {
+        departmentsGrid.InsertRow(new DepartmentViewModel());
+    }
+
+    void OnCreateRow(DepartmentViewModel department)
+    {
+        departmentRepo.Create(department, userId);
+    }
+}

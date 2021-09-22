@@ -1,0 +1,43 @@
+﻿@page "/"
+@inject DialogService dialogService
+
+<h1>Team Calendar</h1>
+<hr />
+
+<RadzenScheduler @ref="scheduler"
+                 Data="@appointments"
+                 TItem="AppointmentViewModel"
+                 StartProperty="StartsAt"
+                 EndProperty="EndsAt"
+                 TextProperty="Description"
+                 Style="height: 80vh"
+                 SlotSelect="@OnSlotSelect">
+    <RadzenMonthView />
+    <RadzenWeekView />
+    <RadzenDayView />
+</RadzenScheduler>
+
+@code {
+    RadzenScheduler<AppointmentViewModel> scheduler;
+    IEnumerable<AppointmentViewModel> appointments = new List<AppointmentViewModel>();
+    int userId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+    }
+
+    async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
+    {
+        AppointmentViewModel appointment = await dialogService.OpenAsync<AddAppointment>("Add Appointment",
+            new Dictionary<string, object> { { "StartsAt", args.Start }, { "EndsAt", args.End } });
+
+        if (appointment != null)
+        {
+            // Save the appointment.
+
+            // Reload the scheduler.
+        }
+    }
+}
